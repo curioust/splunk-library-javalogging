@@ -19,6 +19,8 @@ package com.splunk.logging;
  */
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
@@ -39,6 +41,8 @@ public class HttpEventCollectorEventInfo {
      * @param severity of event
      * @param message is an event content
      */
+    
+    
     public HttpEventCollectorEventInfo(
             final String severity,
             final String message,
@@ -48,16 +52,41 @@ public class HttpEventCollectorEventInfo {
             final String exception_message,
             final Serializable marker
     ) {
+    	
+    	
+    	
+    	
         this.time = System.currentTimeMillis() / 1000.0;
         this.severity = severity;
         this.message = message;
-        this.logger_name = logger_name;
+        //If it is a MuleApp then set the logger name as MuleApp Name and the host name
+        if(this.getClass().getClassLoader() instanceof org.mule.module.launcher.MuleApplicationClassLoader){
+
+        	this.logger_name =  String.format("%s-%s",((org.mule.module.launcher.MuleApplicationClassLoader)this.getClass().getClassLoader()).getAppName(),getComputerName());
+    	}
+		else{
+			this.logger_name = logger_name;
+		}
+        
         this.thread_name = thread_name;
         this.properties = properties;
         this.exception_message = exception_message;
         this.marker = marker;
     }
 
+    
+    public static String getComputerName()
+    {
+    	  String hostName = "Unknown";
+    	    try {
+    	        java.net.InetAddress addr = InetAddress.getLocalHost();
+    	        hostName = addr.getHostName();
+    	    } catch (UnknownHostException ex) {
+    	      System.out.println("Hostname can not be resolved");
+    	    }
+    	    return hostName;
+    }
+    
     /**
      * @return event timestamp in epoch format
      */

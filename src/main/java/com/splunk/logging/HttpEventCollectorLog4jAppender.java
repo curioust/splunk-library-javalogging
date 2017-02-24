@@ -178,6 +178,7 @@ public final class HttpEventCollectorLog4jAppender extends AbstractAppender
     @Override
     public void append(final LogEvent event)
     {
+
         // if an exception was thrown
         this.sender.send(
                 event.getLevel().toString(),

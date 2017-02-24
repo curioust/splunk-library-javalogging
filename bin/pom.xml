@@ -6,7 +6,7 @@
 
   <groupId>com.splunk.logging</groupId>
   <artifactId>splunk-library-javalogging</artifactId>
-  <version>1.5.2-hf2-mule</version>
+  <version>1.5.2-hf2</version>
   <packaging>jar</packaging>
 
   <name>Splunk Logging for Java</name>
@@ -46,24 +46,7 @@
                             </excludes>
                         </configuration>
                     </plugin>
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-dependency-plugin</artifactId>
-    <executions>
-      <execution>
-        <id>copy-dependencies</id>
-        <phase>package</phase>
-        <goals>
-          <goal>copy-dependencies</goal>
-        </goals>
-        <configuration>
-        <!-- exclude junit, we need runtime dependency only -->
-					  <includeScope>runtime</includeScope>
-					  <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
-					</configuration>
-      </execution>
-    </executions>
-  </plugin>
+
                 </plugins>
             </build>
         </profile>
@@ -211,18 +194,6 @@
           <version>3.0</version>
           <scope>test</scope>
       </dependency>
-
-<dependency>
-    <groupId>org.mule.modules</groupId>
-    <artifactId>mule-module-launcher</artifactId>
-    <version>3.7.0</version>
-</dependency>
-
-        <dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.8.0</version>
-</dependency>
 
 </dependencies>
 

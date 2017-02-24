@@ -28,13 +28,19 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
-
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.List;
@@ -152,6 +158,8 @@ final class HttpEventCollectorSender extends TimerTask implements HttpEventColle
             final String exception_message,
             Serializable marker
     ) {
+    	
+       
         // create event info container and add it to the batch
         HttpEventCollectorEventInfo eventInfo =
                 new HttpEventCollectorEventInfo(severity, message, logger_name, thread_name, properties, exception_message, marker);
@@ -224,7 +232,20 @@ final class HttpEventCollectorSender extends TimerTask implements HttpEventColle
         // event body
         JSONObject body = new JSONObject();
         putIfPresent(body, "severity", eventInfo.getSeverity());
-        putIfPresent(body, "message", eventInfo.getMessage());
+        //putIfPresent(body, "message", eventInfo.getMessage());
+        
+        try{
+            //Make the message as another Json; this would allow to add more properties
+            //easier to search in splunk.
+                 JSONParser parser = new JSONParser();
+            body.put("message", (JSONObject) parser.parse(eventInfo.getMessage()));
+        }
+        catch(Exception ex){
+        	 
+        	putIfPresent(body, "message", eventInfo.getMessage());
+        }
+   
+        
         putIfPresent(body, "logger", eventInfo.getLoggerName());
         putIfPresent(body, "thread", eventInfo.getThreadName());
         // add an exception record if and only if there is one
